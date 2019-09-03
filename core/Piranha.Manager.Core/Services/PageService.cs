@@ -104,6 +104,34 @@ namespace Piranha.Manager.Services
         }
 
         /// <summary>
+        /// Gets the site list with the page structure of the selected site for
+        /// the page picker.
+        /// </summary>
+        /// <param name="siteId">The current site</param>
+        /// <returns>The model</returns>
+        public async Task<SiteListModel> GetSiteList(Guid siteId)
+        {
+            var site = await _api.Sites.GetByIdAsync(siteId);
+
+            var model = new SiteListModel
+            {
+                SiteId = siteId,
+                SiteTitle = site.Title,
+                Sites = (await _api.Sites.GetAllAsync())
+                    .OrderByDescending(s => s.IsDefault)
+                    .Select(s => new PageListModel.SiteItem
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Slug = "/",
+                    EditUrl = "manager/site/edit/"
+                }).ToList(),
+                Items = await GetPageStructure(siteId)
+            };
+            return model;
+        }
+
+        /// <summary>
         /// Gets the sitemap model.
         /// </summary>
         /// <returns>The list model</returns>
@@ -237,6 +265,8 @@ namespace Piranha.Manager.Services
                 page.MetaDescription = model.MetaDescription;
                 page.IsHidden = model.IsHidden;
                 page.Published = !string.IsNullOrEmpty(model.Published) ? DateTime.Parse(model.Published) : (DateTime?)null;
+                page.RedirectUrl = model.RedirectUrl;
+                page.RedirectType = (RedirectType)Enum.Parse(typeof(RedirectType), model.RedirectType);
 
                 //
                 // We only need to save regions & blocks for pages that are not copies
@@ -444,6 +474,8 @@ namespace Piranha.Manager.Services
                 MetaDescription = page.MetaDescription,
                 IsHidden = page.IsHidden,
                 Published = page.Published.HasValue ? page.Published.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                RedirectUrl = page.RedirectUrl,
+                RedirectType = page.RedirectType.ToString(),
                 State = GetState(page, isDraft),
                 UseBlocks = type.UseBlocks
             };

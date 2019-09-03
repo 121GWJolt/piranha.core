@@ -65,7 +65,7 @@
         }
     }
 
-    .actions {
+    .actions, .custom-actions {
         float: right;
 
         .btn {
@@ -73,7 +73,15 @@
             width: 1.75rem;
             height: 1.75rem;
             border-radius: 50%;
+            position: relative;
             transition: all ease-in-out .2s;
+
+            i {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+            }
 
             &:hover {
                 background: $gray-400;
@@ -98,9 +106,18 @@
             }
         }
 
-        .handle {
+        .btn {
             cursor: pointer;
         }
+    }
+
+    .custom-actions {
+        position: absolute;
+        top: .5rem;
+        right: 7rem;
+        float: none;
+        opacity: 0;
+        transition: opacity ease-in-out .2s;
     }
 
     .has-media-picker {
@@ -161,7 +178,7 @@
     &:hover, &:focus-within {
         border-color: $gray-400;
 
-        .block-header {
+        .block-header, .custom-actions {
             opacity: 1;
         }
     }
@@ -169,86 +186,86 @@
     &.danger {
         border-color: $danger;
     }
+}
 
-    &.html-block, &.html-column-block {
-        @include content();
+.html-block, .html-column-block {
+    @include content();
 
-        .empty:not(:focus-within) {
-            background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
-            height: 8rem;
-        }
+    .empty:not(:focus-within) {
+        background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
+        height: 8rem;
+    }
+}
+
+.quote-block {
+    .empty:not(:focus-within) {
+        background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
+        height: 8rem;
     }
 
-    &.quote-block {
-        .empty:not(:focus-within) {
-            background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
-            height: 8rem;
-        }
+    p {
+        color: $gray-600;
+        height: 100%;
+        min-height: 2rem;
+        font-family: "Open Sans", serif;
+        font-size: 1.4rem;
+        margin-left: 4.5rem;
+    }
 
-        p {
-            color: $gray-600;
-            height: 100%;
-            min-height: 2rem;
-            font-family: "Open Sans", serif;
-            font-size: 1.4rem;
-            margin-left: 4.5rem;
-        }
+    .quote {
+        display: none;
+        color: $gray-500;
+        float: left;
+        font-size: 2rem;
+        padding: .25rem 1rem;
+    }
 
+    :not(.empty), :focus-within {
         .quote {
-            display: none;
-            color: $gray-500;
-            float: left;
-            font-size: 2rem;
-            padding: .25rem 1rem;
-        }
-
-        :not(.empty), :focus-within {
-            .quote {
-                display: inline;
-            }
+            display: inline;
         }
     }
+}
 
-    &.image-block {
-        position: relative;
-        text-align: center;
+.image-block {
+    position: relative;
+    text-align: center;
 
-        .empty {
-            background: $gray-100;
-        }
+    .empty {
+        background: $gray-100;
+    }
+}
+
+.separator-block {
+    padding: .75rem 1rem;
+
+    hr {
+        width: 80%;
+        border-color: $gray-400;
+    }
+}
+
+.text-block {
+    .empty:not(:focus-within) {
+        background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
+        height: 8rem;
     }
 
-    &.separator-block {
-        padding: .75rem 1rem;
-
-        hr {
-            width: 80%;
-            border-color: $gray-400;
-        }
+    pre {
+        min-height: 1.3rem;
+        height: 100%;
+        font-size: .875rem;
+        margin-bottom: 0;
+        white-space: normal;
     }
+}
 
-    &.text-block {
-        .empty:not(:focus-within) {
-            background: $gray-100 url("../img/empty-text.png") no-repeat 50% 50%;
-            height: 8rem;
-        }
+.missing-block {
+    border: 0;
+    padding: 0;
 
-        pre {
-            min-height: 1.3rem;
-            height: 100%;
-            font-size: .875rem;
-            margin-bottom: 0;
-            white-space: normal;
-        }
-    }
-
-    &.missing-block {
-        border: 0;
-        padding: 0;
-
-        .alert {
-            margin: .5rem 0;
-        }
+    .alert {
+        margin: .5rem 0;
     }
 }
 
