@@ -124,6 +124,9 @@ namespace Piranha.Manager.Services
                 }).ToList()
             };
 
+            // Get drafts
+            var drafts = await _api.Posts.GetAllDraftsAsync(archiveId);
+
             // Get posts
             model.Posts = (await _api.Posts.GetAllAsync<PostInfo>(archiveId))
                 .Select(p => new PostListModel.PostItem
@@ -133,7 +136,7 @@ namespace Piranha.Manager.Services
                     TypeName = model.PostTypes.First(t => t.Id == p.TypeId).Title,
                     Category = p.Category.Title,
                     Published = p.Published.HasValue ? p.Published.Value.ToString("yyyy-MM-dd HH:mm") : null,
-                    Status = GetState(p, false),
+                    Status = GetState(p, drafts.Contains(p.Id)),
                     isScheduled = p.Published.HasValue && p.Published.Value > DateTime.Now,
                     EditUrl = "manager/post/edit/"
                 }).ToList();
@@ -423,6 +426,14 @@ namespace Piranha.Manager.Services
                                 Description = fieldType.Description
                             }
                         };
+
+                        if (typeof(Extend.Fields.SelectFieldBase).IsAssignableFrom(appFieldType.Type))
+                        {
+                            foreach(var item in ((Extend.Fields.SelectFieldBase)Activator.CreateInstance(appFieldType.Type)).Items)
+                            {
+                                field.Meta.Options.Add(Convert.ToInt32(item.Value), item.Title);
+                            }
+                        }
 
                         if (regionType.Fields.Count > 1)
                         {
