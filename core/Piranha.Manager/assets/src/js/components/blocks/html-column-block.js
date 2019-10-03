@@ -27,8 +27,12 @@ Vue.component("html-column-block", {
         }
     },
     mounted: function () {
-        piranha.editor.addInline(this.uid + 1, this.toolbar);
-        piranha.editor.addInline(this.uid + 2, this.toolbar);
+        piranha.editor.addInline(this.uid + 1, this.toolbar, function (codeVal) {
+            component.model.column1.value = codeVal;
+        });
+        piranha.editor.addInline(this.uid + 2, this.toolbar, function (codeVal) {
+            component.model.column2.value = codeVal;
+        });
     },
     beforeDestroy: function () {
         piranha.editor.remove(this.uid + 1);

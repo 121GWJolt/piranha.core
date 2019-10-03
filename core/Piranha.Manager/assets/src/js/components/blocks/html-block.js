@@ -31,7 +31,10 @@ Vue.component("html-block", {
         }
     },
     mounted: function () {
-        piranha.editor.addInline(this.uid, this.toolbar);
+        var component = this;
+        piranha.editor.addInline(this.uid, this.toolbar, function(codeVal) {
+            component.model.body.value = codeVal;
+        });
     },
     beforeDestroy: function () {
         piranha.editor.remove(this.uid);

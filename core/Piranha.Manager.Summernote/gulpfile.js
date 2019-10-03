@@ -1,3 +1,4 @@
+/// <binding BeforeBuild='min' />
 /*
  * Copyright (c) 2019 Håkan Edling
  *
@@ -14,6 +15,12 @@ var output = "assets/dist/";
 
 var resources = [
     "node_modules/summernote/dist/**/*.*",
+    "node_modules/codemirror/lib/*.*",
+    "node_modules/codemirror/mode/xml/*.*",
+    "node_modules/codemirror/addon/hint/show-hint.css",
+    "node_modules/codemirror/addon/hint/show-hint.js",
+    "node_modules/codemirror/addon/hint/xml-hint.js",
+    "node_modules/codemirror/addon/hint/html-hint.js",
     "assets/src/*.*"
 ];
 

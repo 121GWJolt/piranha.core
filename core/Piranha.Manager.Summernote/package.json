@@ -7,6 +7,7 @@
   "license": "MIT",
   "devDependencies": {
     "gulp": "3.9.1",
-    "summernote": "0.8.11"
+    "summernote": "0.8.11",
+    "codemirror": "5.49.0"
   }
 }

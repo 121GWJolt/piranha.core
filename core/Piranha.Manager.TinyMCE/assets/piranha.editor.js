@@ -5,7 +5,7 @@
 //
 // Create a new inline editor
 //
-piranha.editor.addInline = function (id, toolbarId) {
+piranha.editor.addInline = function (id, toolbarId, blurcallback) {
     tinymce.init({
         selector: "#" + id,
         fixed_toolbar_container: "#" + toolbarId,
