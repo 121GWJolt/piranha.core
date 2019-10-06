@@ -258,9 +258,6 @@ Vue.component("block-group", {
                 }
             }
         },
-        toggleHeader: function () {
-            this.model.meta.showHeader = !this.model.meta.showHeader;
-        },
         moveItem: function (from, to) {
             this.model.items.splice(to, 0, this.model.items.splice(from, 1)[0])
         }
@@ -278,18 +275,10 @@ Vue.component("block-group", {
     },
     template:
         "<div :id='uid' class='block-group'>" +
-        "  <div v-if='model.fields.length > 0' class='actions block-group-actions'>" +
-        "    <button v-on:click.prevent='toggleHeader()' class='btn btn-sm' :class='{ selected: model.meta.showHeader }'>" +
-        "      <i class='fas fa-list'></i>" +
-        "    </button>" +
-        "  </div>" +
         "  <div class='block-group-header'>" +
-        "    <div v-if='model.meta.showHeader' class='row'>" +
-        "      <div class='form-group' :class='{ \"col-sm-6\": field.meta.isHalfWidth, \"col-sm-12\": !field.meta.isHalfWidth }' v-for='field in model.fields'>" +
-        "        <label>{{ field.meta.name }}</label>" +
-        "        <div v-if='field.meta.description != null' v-html='field.meta.description' class='field-description small text-muted'></div>" +
-        "        <component v-bind:is='field.meta.component' v-bind:uid='field.meta.uid' v-bind:meta='field.meta' v-bind:toolbar='toolbar' v-bind:model='field.model'></component>" +
-        "      </div>" +
+        "    <div class='form-group' v-for='field in model.fields'>" +
+        "      <label>{{ field.meta.name }}</label>" +
+        "      <component v-bind:is='field.meta.component' v-bind:uid='field.meta.uid' v-bind:meta='field.meta' v-bind:toolbar='toolbar' v-bind:model='field.model'></component>" +
         "    </div>" +
         "  </div>" +
         "  <div class='row'>" +
@@ -352,9 +341,6 @@ Vue.component("block-group-horizontal", {
                 .catch(function (error) { console.log("error:", error );
             });
         },
-        toggleHeader: function () {
-            this.model.meta.showHeader = !this.model.meta.showHeader;
-        },
         moveItem: function (from, to) {
             this.model.items.splice(to, 0, this.model.items.splice(from, 1)[0])
         }
@@ -378,17 +364,11 @@ Vue.component("block-group-horizontal", {
         "    <button v-on:click.prevent='piranha.blockpicker.open(addGroupBlock, 0, model.type)' class='btn btn-sm add'>" +
         "      <i class='fas fa-plus'></i>" +
         "    </button>" +
-        "    <button v-on:click.prevent='toggleHeader()' v-if='model.fields.length > 0' class='btn btn-sm' :class='{ selected: model.meta.showHeader }'>" +
-        "      <i class='fas fa-list'></i>" +
-        "    </button>" +
         "  </div>" +
-        "  <div v-if='model.meta.showHeader' class='block-group-header'>" +
-        "    <div class='row'>" +
-        "      <div class='form-group' :class='{ \"col-sm-6\": field.meta.isHalfWidth, \"col-sm-12\": !field.meta.isHalfWidth }' v-for='field in model.fields'>" +
-        "        <label>{{ field.meta.name }}</label>" +
-        "        <div v-if='field.meta.description != null' v-html='field.meta.description' class='field-description small text-muted'></div>" +
-        "        <component v-bind:is='field.meta.component' v-bind:uid='field.meta.uid' v-bind:meta='field.meta' v-bind:toolbar='toolbar' v-bind:model='field.model'></component>" +
-        "      </div>" +
+        "  <div class='block-group-header'>" +
+        "    <div class='form-group' v-for='field in model.fields'>" +
+        "      <label>{{ field.meta.name }}</label>" +
+        "      <component v-bind:is='field.meta.component' v-bind:uid='field.meta.uid' v-bind:meta='field.meta' v-bind:toolbar='toolbar' v-bind:model='field.model'></component>" +
         "    </div>" +
         "  </div>" +
         "  <div class='row block-group-items'>" +
@@ -432,18 +412,10 @@ Vue.component("html-block", {
     },
     methods: {
         onBlur: function (e) {
-            this.model.body.value = tinyMCE.activeEditor.getContent();
-
-            // Tell parent that title has been updated
-            var title = this.model.body.value.replace(/(<([^>]+)>)/ig, "");
-            if (title.length > 40) {
-                title = title.substring(0, 40) + "...";
-            }
-
-            this.$emit('update-title', {
-                uid: this.uid,
-                title: title
-            });
+            this.model.body.value = e.target.innerHTML;
+        },
+        onChange: function (data) {
+            this.model.body.value = data;
         }
     },
     computed: {
@@ -452,7 +424,7 @@ Vue.component("html-block", {
         }
     },
     mounted: function () {
-        piranha.editor.addInline(this.uid, this.toolbar);
+        piranha.editor.addInline(this.uid, this.toolbar, this.onChange);
     },
     beforeDestroy: function () {
         piranha.editor.remove(this.uid);
@@ -477,10 +449,16 @@ Vue.component("html-column-block", {
     },
     methods: {
         onBlurCol1: function (e) {
-            this.model.column1.value = tinyMCE.activeEditor.getContent();
+            this.model.column1.value = e.target.innerHTML;
         },
         onBlurCol2: function (e) {
-            this.model.column2.value = tinyMCE.activeEditor.getContent();
+            this.model.column2.value = e.target.innerHTML;
+        },
+        onChangeCol1: function (data) {
+            this.model.column1.value = data;
+        },
+        onChangeCol2: function (data) {
+            this.model.column2.value = data;
         }
     },
     computed: {
@@ -492,8 +470,8 @@ Vue.component("html-column-block", {
         }
     },
     mounted: function () {
-        piranha.editor.addInline(this.uid + 1, this.toolbar);
-        piranha.editor.addInline(this.uid + 2, this.toolbar);
+        piranha.editor.addInline(this.uid + 1, this.toolbar, this.onChangeCol1);
+        piranha.editor.addInline(this.uid + 2, this.toolbar, this.onChangeCol2);
     },
     beforeDestroy: function () {
         piranha.editor.remove(this.uid + 1);
@@ -600,21 +578,10 @@ Vue.component("image-block", {
 */
 
 Vue.component("quote-block", {
-    props: ["uid", "model"],
+    props: ["model"],
     methods: {
         onBlur: function (e) {
             this.model.body.value = e.target.innerText;
-
-            // Tell parent that title has been updated
-            var title = this.model.body.value.replace(/(<([^>]+)>)/ig, "");
-            if (title.length > 40) {
-                title = title.substring(0, 40) + "...";
-            }
-
-            this.$emit('update-title', {
-                uid: this.uid,
-                title: title
-            });
         }
     },
     computed: {
@@ -646,21 +613,10 @@ Vue.component("separator-block", {
 */
 
 Vue.component("text-block", {
-    props: ["uid", "model"],
+    props: ["model"],
     methods: {
         onBlur: function (e) {
             this.model.body.value = e.target.innerHTML;
-
-            // Tell parent that title has been updated
-            var title = this.model.body.value.replace(/(<([^>]+)>)/ig, "");
-            if (title.length > 40) {
-                title = title.substring(0, 40) + "...";
-            }
-
-            this.$emit('update-title', {
-                uid: this.uid,
-                title: title
-            });
         }
     },
     computed: {
@@ -1020,7 +976,21 @@ Vue.component("html-field", {
     },
     methods: {
         onBlur: function (e) {
-            this.model.value = tinyMCE.activeEditor.getContent();
+            this.model.value = e.target.innerHTML;
+
+            // Tell parent that title has been updated
+            var title = this.model.value.replace(/(<([^>]+)>)/ig, "");
+            if (title.length > 40) {
+                title = title.substring(0, 40) + "...";
+            }
+
+            this.$emit('update-title', {
+                uid: this.uid,
+                title: title
+            });
+        },
+        onChange: function (data) {
+            this.model.value = data;
 
             // Tell parent that title has been updated
             var title = this.model.value.replace(/(<([^>]+)>)/ig, "");
@@ -1040,7 +1010,7 @@ Vue.component("html-field", {
         }
     },
     mounted: function () {
-        piranha.editor.addInline(this.uid, this.toolbar);
+        piranha.editor.addInline(this.uid, this.toolbar, this.onChange);
     },
     beforeDestroy: function () {
         piranha.editor.remove(this.uid);
