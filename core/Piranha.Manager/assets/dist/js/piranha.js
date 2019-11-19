@@ -26436,7 +26436,7 @@ piranha.resources = new function() {
 */
 
 piranha.editor = {
-    editors = [],
+    editors:[],
 
     addInline: function (id, toolbarId) {
         console.log("No HTML editor registered.")
